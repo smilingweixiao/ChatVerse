@@ -1,0 +1,32 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# client
+client/node_modules
+client/.pnp
+client/.pnp.js
+client/.yarn/install-state.gz
+
+client/coverage
+
+client/.next/
+client/out/
+
+client/build
+
+client/.DS_Store
+client/*.pem
+
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+
+client/.env*.local
+
+client/.vercel
+
+client/*.tsbuildinfo
+client/next-env.d.ts
+
+# server
+
+server/myenv
