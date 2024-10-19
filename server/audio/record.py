@@ -55,7 +55,7 @@ def stopRecording():
     thread.join()
     text = speech2text(WAVE_OUTPUT_FILENAME)
     print("Whisper output: ", text)
-    event.updateChatHistory(text, 'human')
+    event.updateChatHistory(text, 'human', True)
 
 def speech2text(file_path):
     # Load the Whisper model

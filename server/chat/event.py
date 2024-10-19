@@ -60,7 +60,7 @@ def threadGetResponse():
         count += 1
         
 
-def updateChatHistory(input, speaker):
+def updateChatHistory(input, speaker, recording=False):
     global lock, agentResponse, chat_history, agent_history, agentResponseFlag, thread
     
     if input != '':
@@ -70,6 +70,8 @@ def updateChatHistory(input, speaker):
                 'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 'id': str(uuid.uuid4())
             })
+        if recording:
+            return True
         # print("Receive user input")
         response, agent = get_agent_response(chat_history, agentState)
         if 'human' in agent:
