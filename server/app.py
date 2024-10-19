@@ -1,14 +1,24 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-# from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 import chat.event as event
 from chat.eventType import EventType, agentMap
+import logging
 
 recording = False
 
 app = Flask(__name__)
-# CORS(app)
+# 配置CORS
+socketio = SocketIO(app, cors_allowed_origins="http://127.0.0.1:3000")
+
+CORS(app)
+
+# 配置SocketIO
 # socketio = SocketIO(app)
+
+
+
+logging.basicConfig(level=logging.INFO)
 
 @app.route('/')
 def hello_world():
@@ -58,20 +68,36 @@ def chat():
 def toggleAgent1(agent_id):
     agent = agentMap[agent_id]
     event.toggleAgent(agent)
+    state = event.getAgentState(agent)
     
-    socketio.emit('role_updated', agent)
+    socketio.emit('role_updated', {'roleName': agent, 'roleState': state})
+    # emit('role_updated', 'roleName: ' + agent, broadcast=True)
+    # socketio.emit('role_updated', {'roleName': agent})
     return jsonify({'message': f'Agent {agent} toggled'}), 200
+
+@socketio.on('connect')
+def handle_connect():
+    print("A client connected!")  # 客戶端連接時觸發
+    
+@socketio.on('disconnect')
+def handle_disconnect():
+    print("A client disconnected!")  # 客戶端連接時觸發
+    
+# @socketio.on('role_updated')
+# def handle_message(data):
+#     print('Received message:', data)
+#     return 'Role updated!'
 
 if __name__ == '__main__':
     event.loadChatHistory()
     event.initAgentState({
-        "joy": True,
-        "debater": True,
-        "hater": True,
-        "joker": True,
-        "thinker": True,
-        "nova": True,
+        "joy": False,
+        "debater": False,
+        "hater": False,
+        "joker": False,
+        "thinker": False,
+        "nova": False,
         "expert": False,
         "evil": False
     })
-    app.run(host='127.0.0.1', port=5000)
+    socketio.run(app, host='localhost', port=5000)

@@ -72,6 +72,11 @@ def updateChatHistory(input, speaker):
             })
         # print("Receive user input")
         response, agent = get_agent_response(chat_history, agentState)
+        if 'human' in agent:
+            while True:
+                response, agent = get_agent_response(chat_history, agentState)
+                if 'human' not in agent:
+                    break
         chat_history.append({
                 'speaker': agent,
                 'message': response,
@@ -120,6 +125,9 @@ def clearChatHistory():
 def toggleAgent(agent):
     agentState[agent] = not agentState[agent]
     print(agentState)
+
+def getAgentState(agent):
+    return agentState[agent]
 
 if __name__ == '__main__':
     print(getChatHistory())

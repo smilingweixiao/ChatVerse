@@ -3,15 +3,17 @@ import { useEffect, useState, useRef } from "react";
 import { io } from 'socket.io-client';
 import { generate_chat, start_recording, stop_recording } from './api/chatroom'
 
+const socket = io('http://127.0.0.1:5000');
+
 export default function Home() {
-  const [roles, setRole] = useState<string[]>([]);
   const [messages, setMessages] = useState<{ text: string; message_side: string; speaker: string }[]>([]);
   const [messageInput, setMessageInput] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [keepChat, setKeepChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const avatarImages: { [key: string]: string } = {
-    'system': 'https://i.ibb.co/fdFTSp7/website.png',
+    '': 'https://i.ibb.co/fdFTSp7/website.png',
     '1' : 'https://i.ibb.co/q7RYZ5q/1.png',
     '2' : 'https://i.ibb.co/9cJ4mLt/2.png',
     '3' : 'https://i.ibb.co/wdkppXG/3.png',
@@ -22,18 +24,41 @@ export default function Home() {
     '8' : 'https://i.ibb.co/VT7xFwJ/8.png'
   };
 
-  const socket = io('http://localhost:5000');
+  const handleRoleUpdate = ((roleData) => {
+    
+    if (roleData.roleState === false) {
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: `${roleData.roleName} leaved!`, message_side: "middle", speaker: ''},
+      ]);
+      
+    } 
+    else {
+    
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: `${roleData.roleName} joined!`, message_side: "middle", speaker: ''},
+      ]);
+
+    }
+
+  });
   
   useEffect(() => {
- 
-    setMessages(() => [
-        { text: "hello!", message_side: "left", speaker: 'system'}
-    ]);
+
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
+    
+    socket.on("disconnect", () => {
+      console.log(socket.id);
+    });
 
     socket.on('role_updated', handleRoleUpdate);
 
     return () => {
-        socket.off('role_updated', handleRoleUpdate); // 清除事件監聽器
+      socket.off('role_updated');
     };
 
   }, []);
@@ -44,26 +69,7 @@ export default function Home() {
     }
   }, [messages.length]);
 
-  const handleRoleUpdate = ((roleName: string) => {
-    if (roles.includes(roleName)) {
-      setRole(roles.filter((role) => role !== roleName));
-
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: `${roleName} leaved!`, message_side: "middle", speaker: 'system'},
-      ]);
-      
-    } 
-    else {
-      setRole([...roles, roleName]);
-
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: `${roleName} joined!`, message_side: "middle", speaker: 'system'},
-      ]);
-
-    }
-  });
+ 
 
   const handleSendMessage = () => {
     sendMessage(messageInput);
@@ -75,12 +81,47 @@ export default function Home() {
     }
   };
 
+  const recursiveGenerateChat = async (message: string) => {
+    try {
+      const chatData = await generate_chat(message);
+
+      // agent 無話可說
+      if (chatData.message === '') {
+        return;
+      }
+
+      // agent 有話可說，並且使用者不想說
+      else if (keepChat === true) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: chatData.message, message_side: "left", speaker: chatData.speaker },
+        ]);
+        await recursiveGenerateChat("");
+        return;
+      }
+
+      // 使用者想說話
+      else {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: chatData.message, message_side: "left", speaker: chatData.speaker },
+        ]);
+        return;
+      }
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
   const sendMessage = async (text: string) => {
     if (text.trim() === "") return;
 
+    setKeepChat(false);
     setMessages((prevMessages) => [
       ...prevMessages,
-      { text, message_side: "right", speaker: 'user'}
+      { text, message_side: "right", speaker: 'human'}
     ]);
     setMessageInput("");
 
@@ -91,6 +132,8 @@ export default function Home() {
         ...prevMessages,
         { text: response.message, message_side: "left", speaker: response.speaker},
       ]);
+      setKeepChat(true);
+      recursiveGenerateChat("");
 
     })
     .catch((err) => {
@@ -118,7 +161,7 @@ export default function Home() {
     .then((response) => {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: response.message, message_side: "right", speaker: 'user'},
+        { text: response.message, message_side: "right", speaker: 'human'},
       ]);
       generate_chat(response.message)
       .then((response) => {
@@ -127,6 +170,7 @@ export default function Home() {
           ...prevMessages,
           { text: response.message, message_side: "left", speaker: response.speaker},
         ]);
+        recursiveGenerateChat("");
 
       })
       .catch((err) => {
