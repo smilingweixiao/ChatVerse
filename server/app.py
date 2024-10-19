@@ -40,8 +40,16 @@ def chat():
         return jsonify(event.getChatHistory()), 200
     elif request.method == 'POST':
         data = request.json
-        event.updateChatHistory(data.get('message'), EventType.USER_INPUT)
-        return jsonify(event.getChatHistory()[-1]), 200
+        status = event.updateChatHistory(data.get('message'), data.get('speaker'))
+        if status:
+            return jsonify(event.getChatHistory()[-1]), 200
+        else:
+            return jsonify({
+                'speaker': '',
+                'message': '',
+                'timestamp': '',
+                'id': ''
+                }), 200
     else:
         event.clearChatHistory()
         return jsonify({'message': 'Chat history cleared'}), 200
@@ -56,5 +64,14 @@ def toggleAgent1(agent_id):
 
 if __name__ == '__main__':
     event.loadChatHistory()
-    event.initAgentState()
+    event.initAgentState({
+        "joy": False,
+        "debater": False,
+        "hater": False,
+        "joker": False,
+        "thinker": True,
+        "nova": True,
+        "expert": False,
+        "evil": False
+    })
     app.run(host='127.0.0.1', port=5000)

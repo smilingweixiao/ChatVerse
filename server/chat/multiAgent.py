@@ -21,7 +21,7 @@ llm_config = {
 }
 
 config_list = autogen.config_list_from_json(
-    env_or_file="oai_config.json",
+    env_or_file="./server/chat/oai_config.json",
     filter_dict={
         "model": ["gpt-4o-mini"],
     },
@@ -170,7 +170,5 @@ def get_agent_response(chat_history: List[Dict], agentState: Dict[str, bool]) ->
 
     # Generate the agent's response
     response_text = generate_response_with_references(agent, conversation_history, last_message)
-    print("Res: ")
-    print(response_text)
 
     return response_text, suggested_speaker
