@@ -14,14 +14,14 @@ api_key = os.environ["OPENAI_API_KEY"]
 openai.api_key = api_key
 
 llm_config = {
-    "config_list": [{"model": "gpt-4", "api_key": api_key}],
+    "config_list": [{"model": "gpt-4o-mini", "api_key": api_key}],
 }
 
 # Assuming you have 'oai_config.json' properly set up, else you can skip this
 config_list = autogen.config_list_from_json(
     env_or_file="./server/chat/oai_config.json",
     filter_dict={
-        "model": ["gpt-4"],
+        "model": ["gpt-4o-mini"],
     },
 )
 
@@ -134,7 +134,7 @@ def call_llm_api(conversation_history: str) -> str:
     """Send the conversation history to the LLM and get the suggested next speaker."""
     try:
         response = openai.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "Determine which agent should respond next based on the conversation."},
                 {
@@ -163,7 +163,7 @@ def generate_response_with_references(agent: Agent, conversation_history: str, l
     try:
         # Use LLM to generate a response that might reference previous messages
         response = openai.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
