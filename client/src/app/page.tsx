@@ -1,11 +1,12 @@
 "use client"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { generate_chat, start_recording, stop_recording } from './api/chatroom'
 
 export default function Home() {
   const [messages, setMessages] = useState<{ text: string; message_side: string; speaker: number }[]>([]);
   const [messageInput, setMessageInput] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
  
@@ -14,6 +15,12 @@ export default function Home() {
          ]);
 
   }, []);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages.length]);
 
   const handleSendMessage = () => {
     sendMessage(messageInput);
@@ -56,7 +63,7 @@ export default function Home() {
     start_recording()
     .then((response) => {
       console.log(response)
-  0  })
+    })
     .catch((err) => {
       console.error(err)
     })
@@ -68,8 +75,20 @@ export default function Home() {
     .then((response) => {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: response.message, message_side: "left", speaker: response.speaker},
+        { text: response.message, message_side: "right", speaker: 0},
       ]);
+      generate_chat(response.message)
+      .then((response) => {
+        console.log(response)
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: response.message, message_side: "left", speaker: response.speaker},
+        ]);
+
+      })
+      .catch((err) => {
+        console.error(err)
+      })
     })
     .catch((err) => {
       console.error(err)
@@ -100,8 +119,11 @@ export default function Home() {
                 <div className="text">{message.text}</div>
               </div>
             </li>
+            
           ))}
-        </ul>
+          <div ref={messagesEndRef} />
+        </ul >
+        
         <div className="bottom_wrapper">
           <div className="message_input_wrapper">
             <input

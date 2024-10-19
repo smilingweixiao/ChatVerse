@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+/* * {
   box-sizing: border-box;
-}
+} */
 
 body {
   height: 100vh;
@@ -68,9 +68,9 @@ body {
   flex-direction: column;
   position: relative;
   list-style: none;
-  /* padding: 20px 10px 0 10px; */
   margin: 0;
   height: 650px;
+  height: cal(100% - 90px - 65px);
   width: 100%;
   overflow-y: auto;
 }
@@ -84,7 +84,6 @@ body {
   word-wrap: break-word; 
   padding: 10px 15px;
   border-radius: 8px;
-  
 }
 
 .messages .message.left {
@@ -134,13 +133,11 @@ body {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  /* display: inline-block; */
 }
 .messages .message .text_wrapper {
   display: inline-block;
   padding: 20px;
   border-radius: 6px;
-  width: 90%;
   position: relative;
 }
 .messages .message .text_wrapper::after, .messages .message .text_wrapper:before {
@@ -178,7 +175,6 @@ body {
 .bottom_wrapper .message_input_wrapper {
   display: flex;
   flex-direction: row;
-  height: 50px;
   border-radius: 25px;
   border: 1px solid #bcbdc0;
   width: 90%;

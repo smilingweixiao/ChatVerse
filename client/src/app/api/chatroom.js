@@ -12,7 +12,7 @@ async function server_generate_chat(userInput) {
         timestamp: moment().format('YYYY-MM-DD HH:mm:ss')
     };
     
-    // return {speaker: 1, message: "hihihihi", timestamp: "2024-11-11 11:11:11"}
+    return {speaker: 1, message: "hihihihi", timestamp: "2024-11-11 11:11:11"}
   
     let response = await axios.post(`${baseURL}/api/chat`, newMessage);
     console.log('agent say: ', response);
@@ -31,7 +31,7 @@ export async function generate_chat(userInput) {
 
 async function server_start_recording() {
     
-    // return {speaker: 1, message: "start recording", timestamp: "2024-11-11 11:11:11"}
+    return {speaker: 1, message: "start recording", timestamp: "2024-11-11 11:11:11"}
   
     let response = await axios.post(`${baseURL}/api/start_recording`);
     console.log('recording says: ', response);
@@ -52,7 +52,7 @@ export async function start_recording() {
 
 async function server_stop_recording() {
     
-    // return {speaker: 1, message: "finish recording", timestamp: "2024-22-22 22:22:22"}
+    return {speaker: 0, message: "finish recording", timestamp: "2024-22-22 22:22:22"}
   
     let response = await axios.post(`${baseURL}/api/stop_recording`);
     console.log('recording says: ', response);
