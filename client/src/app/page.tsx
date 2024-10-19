@@ -4,21 +4,18 @@ import { io } from 'socket.io-client';
 import { generate_chat, start_recording, stop_recording } from './api/chatroom'
 
 export default function Home() {
-  const [messages, setMessages] = useState<{ text: string; message_side: string; speaker: number }[]>([]);
+  const [roles, setRole] = useState<string[]>([]);
+  const [messages, setMessages] = useState<{ text: string; message_side: string; speaker: string }[]>([]);
   const [messageInput, setMessageInput] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const socket = io('http://localhost:5000');
-  const [role, setRole] = useState(null);
-
+  
   useEffect(() => {
-
-    const handleRoleUpdate = ((roleData) => {
-        setRole(roleData);
-    });
  
     setMessages(() => [
-        { text: "hello!", message_side: "left", speaker: -1},
+        { text: "hello!", message_side: "middle", speaker: 'system'},
     ]);
 
     socket.on('role_updated', handleRoleUpdate);
@@ -35,6 +32,27 @@ export default function Home() {
     }
   }, [messages.length]);
 
+  const handleRoleUpdate = ((roleName) => {
+    if (roles.includes(roleName)) {
+      setRole(roles.filter((role) => role !== roleName));
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: `${roleName} leaved!`, message_side: "middle", speaker: 'system'},
+      ]);
+      
+    } 
+    else {
+      setRole([...roles, roleName]);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: `${roleName} joined!`, message_side: "middle", speaker: 'system'},
+      ]);
+
+    }
+  });
+
   const handleSendMessage = () => {
     sendMessage(messageInput);
   };
@@ -50,7 +68,7 @@ export default function Home() {
 
     setMessages((prevMessages) => [
       ...prevMessages,
-      { text, message_side: "right", speaker: 0},
+      { text, message_side: "right", speaker: 'user'},
     ]);
     setMessageInput("");
 
@@ -88,7 +106,7 @@ export default function Home() {
     .then((response) => {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: response.message, message_side: "right", speaker: 0},
+        { text: response.message, message_side: "right", speaker: 'user'},
       ]);
       generate_chat(response.message)
       .then((response) => {

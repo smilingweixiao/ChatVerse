@@ -2,16 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO
 import chat.event as event
-<<<<<<< Updated upstream
 from chat.eventType import EventType, agentMap
-# import json
-# import requests
-# import os
-# import sys
-=======
-from chat.eventType import EventType
-
->>>>>>> Stashed changes
 
 recording = False
 
@@ -59,6 +50,8 @@ def chat():
 def toggleAgent1(agent_id):
     agent = agentMap[agent_id]
     event.toggleAgent(agent)
+    
+    socketio.emit('role_updated', agent)
     return jsonify({'message': f'Agent {agent} toggled'}), 200
 
 if __name__ == '__main__':
