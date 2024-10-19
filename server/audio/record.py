@@ -1,13 +1,15 @@
 import pyaudio
 import wave
 import threading
+import chat.event as event
+import whisper
+from chat.eventType import EventType
 
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
-RECORD_SECONDS = 5
-WAVE_OUTPUT_FILENAME = "output.wav"
+WAVE_OUTPUT_FILENAME = "server/audio/output.wav"
 
 recording = False
 thread = None
@@ -51,3 +53,24 @@ def stopRecording():
     global recording, thread
     recording = False
     thread.join()
+    text = speech2text(WAVE_OUTPUT_FILENAME)
+    print("Whisper output: ", text)
+    event.updateChatHistory(text, EventType.USER_INPUT)
+
+def speech2text(file_path):
+    # Load the Whisper model
+    model_m = whisper.load_model('medium')
+
+    # Load the audio
+    audio = whisper.load_audio(file_path)
+    audio = whisper.pad_or_trim(audio)
+
+    # Convert the audio to log-Mel spectrograms
+    # mel = whisper.log_mel_spectrogram(audio).to(model_m.device)
+
+    # Detect language (optional step)
+    # _, probs = model_m.detect_language(mel)
+    # print(f"Detected language: {max(probs, key=probs.get)}")
+
+    result = model_m.transcribe(file_path)
+    return result["text"]
