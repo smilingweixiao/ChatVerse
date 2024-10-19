@@ -33,9 +33,9 @@ export async function generate_chat(userInput) {
 
 async function server_start_recording() {
     
-    return {speaker: 1, message: "start recording", timestamp: "2024-11-11 11:11:11"}
+    // return {speaker: 1, message: "start recording", timestamp: "2024-11-11 11:11:11"}
   
-    // let response = await axios.post(`${baseURL}/api/start_recording`);
+    let response = await axios.post(`${baseURL}/api/start_recording`);
     console.log('recording says: ', response);
     return response.data;
 }

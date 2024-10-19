@@ -13,15 +13,15 @@ export default function Home() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const avatarImages: { [key: string]: string } = {
-    '': 'https://i.ibb.co/fdFTSp7/website.png',
-    '1' : 'https://i.ibb.co/q7RYZ5q/1.png',
-    '2' : 'https://i.ibb.co/9cJ4mLt/2.png',
-    '3' : 'https://i.ibb.co/wdkppXG/3.png',
-    '4' : 'https://i.ibb.co/x71Y6rB/4.png',
-    '5' : 'https://i.ibb.co/Fnwnsz7/5.png',
-    '6' : 'https://i.ibb.co/MMfWKPp/6.png',
-    '7' : 'https://i.ibb.co/Np5s76X/7.png',
-    '8' : 'https://i.ibb.co/VT7xFwJ/8.png'
+    'human': 'https://i.ibb.co/fdFTSp7/website.png',
+    'joy' : 'https://i.ibb.co/q7RYZ5q/1.png',
+    'debater' : 'https://i.ibb.co/9cJ4mLt/2.png',
+    'hater' : 'https://i.ibb.co/wdkppXG/3.png',
+    'joker' : 'https://i.ibb.co/x71Y6rB/4.png',
+    'thinker' : 'https://i.ibb.co/Fnwnsz7/5.png',
+    'nova' : 'https://i.ibb.co/MMfWKPp/6.png',
+    'expert' : 'https://i.ibb.co/Np5s76X/7.png',
+    'evil' : 'https://i.ibb.co/VT7xFwJ/8.png'
   };
 
   const handleRoleUpdate = ((roleData) => {

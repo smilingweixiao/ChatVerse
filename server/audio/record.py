@@ -4,6 +4,8 @@ import threading
 import chat.event as event
 import whisper
 from chat.eventType import EventType
+from openai import OpenAI
+import os
 
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
@@ -46,14 +48,15 @@ def record():
 def startRecording():
     global recording, thread
     recording = True
-    thread = threading.Thread(target=record)
-    thread.start()
+    if thread == None or thread.is_alive() == False:
+        thread = threading.Thread(target=record)
+        thread.start()
 
 def stopRecording():
     global recording, thread
     recording = False
     thread.join()
-    text = speech2text(WAVE_OUTPUT_FILENAME)
+    text = transcribe_function(WAVE_OUTPUT_FILENAME)
     print("Whisper output: ", text)
     event.updateChatHistory(text, 'human', True)
 
@@ -74,3 +77,14 @@ def speech2text(file_path):
 
     result = model_m.transcribe(file_path)
     return result["text"]
+
+api_key = os.environ['OPENAI_API_KEY']
+client = OpenAI(api_key=api_key)
+
+def transcribe_function(audio_file_path):
+    audio_file = open(audio_file_path, "rb")
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1", 
+        file=audio_file
+    )
+    return transcription.text
