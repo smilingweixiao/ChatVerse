@@ -59,7 +59,7 @@ def stopRecording():
 
 def speech2text(file_path):
     # Load the Whisper model
-    model_m = whisper.load_model('medium')
+    model_m = whisper.load_model('small').to("cuda")
 
     # Load the audio
     audio = whisper.load_audio(file_path)
