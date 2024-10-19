@@ -35,76 +35,26 @@ def initAgentState(initial_state=None):
 def threadGetResponse():
     global lock, agentResponse, chat_history
     while True:
-        agent_response, agent = get_agent_response(chat_history + agent_history, agentState)
-        print("agent:", agent, ", response: ", agent_response)
-        if len(agent_response.split("\n\n")) > 1:
-                parts = agent_response.split("\n\n")
-                print(f'parts: {parts}')
-                try:
-                    name1, text1 = parts[0].split(": ", 1)
-                    name2, text2 = parts[1].split(": ", 1)
-                    # updateChatHistory(text1, EventType.AGENT_INPUT, name1)
-                    # updateChatHistory(text2, EventType.AGENT_INPUT, name2)
-                    chat_history.append({
-                        'speaker': name1,
-                        'message': text1,
-                        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        'id': str(uuid.uuid4())
-                    })
-                    chat_history.append({
-                        'speaker': name2,
-                        'message': text2,
-                        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        'id': str(uuid.uuid4())
-                    })
-                    print(f'{name1}: {text1}')
-                    print(f'{name2}: {text2}')
-                except:
-                    name = agent
-                    text = agent_response
-                    chat_history.append({
-                        'speaker': agent,
-                        'message': agent_response,
-                        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        'id': str(uuid.uuid4())
-                    })
-        else:
-            if ": " in agent_response:
-                name, text = agent_response.split(": ", 1)
-                # updateChatHistory(text, EventType.AGENT_INPUT, name)
-                chat_history.append({
-                    'speaker': name,
-                    'message': text,
-                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    'id': str(uuid.uuid4())
-                })
-                print(f'{name}: {text}')
-            else:
-                # updateChatHistory(agent_response, EventType.AGENT_INPUT, speaker)
-                chat_history.append({
-                    'speaker': agent,
-                    'message': agent_response,
-                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    'id': str(uuid.uuid4())
-                })
-                print(f'{agent}: {agent_response}')
+        response, agent = get_agent_response(chat_history + agent_history, agentState)
+        print("agent:", agent, ", response: ", response)
         with lock:
+            if agent == 'human':
+                agentResponse = -1
+                return
+            
             agentResponse += 1
             agent_history.append({
                 'speaker': agent,
-                'message': agent_response,
+                'message': response,
                 'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 'id': str(uuid.uuid4())
             })
-            if agent_response == 'should respond next: human' or agent == 'human':
-                agentResponse = -1
-                return
         
 
 def updateChatHistory(input, speaker):
-    global lock, agentResponse, chat_history
+    global lock, agentResponse, chat_history, agent_history
     
-    if speaker == 'human':
+    if input != '':
         chat_history.append({
                 'speaker': speaker,
                 'message': input,
@@ -112,62 +62,17 @@ def updateChatHistory(input, speaker):
                 'id': str(uuid.uuid4())
             })
         # print("Receive user input")
-        agent_response, agent = get_agent_response(chat_history, agentState)
-        if len(agent_response.split("\n\n")) > 1:
-                parts = agent_response.split("\n\n")
-                print(f'parts: {parts}')
-                try:
-                    name1, text1 = parts[0].split(": ", 1)
-                    name2, text2 = parts[1].split(": ", 1)
-                    # updateChatHistory(text1, EventType.AGENT_INPUT, name1)
-                    # updateChatHistory(text2, EventType.AGENT_INPUT, name2)
-                    chat_history.append({
-                        'speaker': name1,
-                        'message': text1,
-                        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        'id': str(uuid.uuid4())
-                    })
-                    chat_history.append({
-                        'speaker': name2,
-                        'message': text2,
-                        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        'id': str(uuid.uuid4())
-                    })
-                    print(f'{name1}: {text1}')
-                    print(f'{name2}: {text2}')
-                except:
-                    name = agent
-                    text = agent_response
-                    chat_history.append({
-                        'speaker': agent,
-                        'message': agent_response,
-                        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        'id': str(uuid.uuid4())
-                    })
-        else:
-            if ": " in agent_response:
-                name, text = agent_response.split(": ", 1)
-                # updateChatHistory(text, EventType.AGENT_INPUT, name)
-                chat_history.append({
-                    'speaker': name,
-                    'message': text,
-                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    'id': str(uuid.uuid4())
-                })
-                print(f'{name}: {text}')
-            else:
-                # updateChatHistory(agent_response, EventType.AGENT_INPUT, speaker)
-                chat_history.append({
-                    'speaker': agent,
-                    'message': agent_response,
-                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    'id': str(uuid.uuid4())
-                })
-                print(f'{agent}: {agent_response}')
+        response, agent = get_agent_response(chat_history, agentState)
+        chat_history.append({
+                'speaker': agent,
+                'message': response,
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'id': str(uuid.uuid4())
+            })
         agentResponse = 0
         thread = threading.Thread(target=threadGetResponse)
         thread.start()
-    elif speaker == '':
+    else:
         # print("Get agent input")
         count = 0
         while agentResponse == 0:

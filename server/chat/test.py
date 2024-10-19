@@ -1,15 +1,15 @@
 # event.py
 import sys
 sys.path.append('/Users/victorchen/Desktop/MCHackthon2024_Logi06/server/')
-from chat.eventType import EventType
+from eventType import EventType
 from datetime import datetime
 import json
 import uuid
-from chat.eventType import agentMap
+from eventType import agentMap
 from multiAgent import get_agent_response
 
 AGENT_COUNT = 8
-CHAT_PATH = "/Users/victorchen/Desktop/MCHackthon2024_Logi06/server/chat/chat_history.json"
+CHAT_PATH = "./server/chat/chat_history.json"
 agentState = {}
 
 chat_history = []
