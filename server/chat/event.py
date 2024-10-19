@@ -6,6 +6,7 @@ from chat.eventType import agentMap
 from chat.multiAgent import get_agent_response
 import threading
 import time
+import random
 
 AGENT_COUNT = 8
 CHAT_PATH = "server/chat/chat_history.json"
@@ -15,6 +16,8 @@ lock = threading.Lock()
 chat_history = []
 agent_history = []
 agentResponse = 0
+agentResponseFlag = True
+thread = None
 
 def loadChatHistory():
     global chat_history
@@ -33,13 +36,18 @@ def initAgentState(initial_state=None):
             agentState[agent] = False
 
 def threadGetResponse():
-    global lock, agentResponse, chat_history
+    global lock, agentResponse, chat_history, agentResponseFlag
+    count = random.randint(0, 2)
     while True:
+        if count > 5:
+            agentResponseFlag = False
+            return
         response, agent = get_agent_response(chat_history + agent_history, agentState)
-        print("agent:", agent, ", response: ", response)
+        # print("agent:", agent, ", response: ", response)
+        
         with lock:
-            if agent == 'human':
-                agentResponse = -1
+            if 'human' in agent:
+                agentResponseFlag = False
                 return
             
             agentResponse += 1
@@ -49,10 +57,11 @@ def threadGetResponse():
                 'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 'id': str(uuid.uuid4())
             })
+        count += 1
         
 
 def updateChatHistory(input, speaker):
-    global lock, agentResponse, chat_history, agent_history
+    global lock, agentResponse, chat_history, agent_history, agentResponseFlag, thread
     
     if input != '':
         chat_history.append({
@@ -70,14 +79,18 @@ def updateChatHistory(input, speaker):
                 'id': str(uuid.uuid4())
             })
         agentResponse = 0
-        thread = threading.Thread(target=threadGetResponse)
-        thread.start()
+        agentResponseFlag = True
+        if thread == None or thread.is_alive() == False:
+            thread = threading.Thread(target=threadGetResponse)
+            thread.start()
     else:
         # print("Get agent input")
         count = 0
         while agentResponse == 0:
+            if thread == None or (thread != None and not thread.is_alive()):
+                return False
             # print("Waiting for agent response, agentResponse: ", agentResponse)
-            if agentResponse == -1 or count > 20:
+            if agentResponseFlag == False or count > 5:
                 return False
             count += 1
             time.sleep(1)
