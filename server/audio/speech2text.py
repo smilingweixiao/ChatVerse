@@ -6,8 +6,6 @@ def speech2text(file_path):
 
     # Load the audio
     audio = whisper.load_audio(file_path)
-
-    # Optionally, preprocess the audio (pad/trim and resample to 16000 Hz if needed)
     audio = whisper.pad_or_trim(audio)
 
     # Convert the audio to log-Mel spectrograms
@@ -18,8 +16,9 @@ def speech2text(file_path):
     # print(f"Detected language: {max(probs, key=probs.get)}")
 
     result = model_m.transcribe(file_path)
-    print(result["text"])
+    return result["text"]
 
 
 file_path = './data/test2.wav'
-speech2text(file_path)
+text = speech2text(file_path)
+print(text)
