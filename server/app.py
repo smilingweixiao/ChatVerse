@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import chat.event as event
-from chat.eventType import EventType
+from chat.eventType import EventType, agentMap
 # import json
 # import requests
 # import os
@@ -50,8 +50,9 @@ def chat():
 
 @app.route('/api/console/<int:agent_id>', methods=['GET'])
 def toggleAgent1(agent_id):
-    event.toggleAgent(agent_id)
-    return jsonify({'message': f'Agent {agent_id} toggled'}), 200
+    agent = agentMap[agent_id]
+    event.toggleAgent(agent)
+    return jsonify({'message': f'Agent {agent} toggled'}), 200
 
 if __name__ == '__main__':
     event.loadChatHistory()

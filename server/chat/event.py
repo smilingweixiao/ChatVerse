@@ -2,10 +2,11 @@ from chat.eventType import EventType
 from datetime import datetime
 import json
 import uuid
+from chat.eventType import agentMap
 
 AGENT_COUNT = 8
 CHAT_PATH = "server/chat/chat_history.json"
-agentState = []
+agentState = {}
 
 chat_history = []
 
@@ -19,8 +20,8 @@ def loadChatHistory():
 
 def initAgentState():
     global agentState
-    for i in range(AGENT_COUNT):
-        agentState.append(False)
+    for agent in agentMap.values():
+        agentState[agent] = False
 
 def updateChatHistory(input, eventType):
     # print("Event handler received input: " + input)
@@ -54,8 +55,9 @@ def clearChatHistory():
     with open(CHAT_PATH, "w") as f:
         json.dump(chat_history, f, indent=4)
 
-def toggleAgent(agent_id):
-    agentState[agent_id - 1] = not agentState[agent_id - 1]
+def toggleAgent(agent):
+    agentState[agent] = not agentState[agent]
+    print(agentState)
 
 if __name__ == '__main__':
     print(getChatHistory())
