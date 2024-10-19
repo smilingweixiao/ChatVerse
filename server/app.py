@@ -31,7 +31,7 @@ def stopRecord():
         return jsonify({'message': 'No recording in progress'}), 400
     recording = False
     from audio.record import stopRecording
-    stopRecording()
+    stopRecording()+
     return jsonify({'message': 'Recording completed'}), 200
 
 if __name__ == '__main__':
