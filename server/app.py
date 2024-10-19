@@ -1,16 +1,23 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_socketio import SocketIO
 import chat.event as event
+<<<<<<< Updated upstream
 from chat.eventType import EventType, agentMap
 # import json
 # import requests
 # import os
 # import sys
+=======
+from chat.eventType import EventType
+
+>>>>>>> Stashed changes
 
 recording = False
 
 app = Flask(__name__)
 CORS(app)
+socketio = SocketIO(app)
 
 @app.route('/')
 def hello_world():

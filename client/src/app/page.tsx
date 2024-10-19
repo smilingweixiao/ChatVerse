@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState, useRef } from "react";
+import { io } from 'socket.io-client';
 import { generate_chat, start_recording, stop_recording } from './api/chatroom'
 
 export default function Home() {
@@ -7,12 +8,24 @@ export default function Home() {
   const [messageInput, setMessageInput] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const socket = io('http://localhost:5000');
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
+
+    const handleRoleUpdate = ((roleData) => {
+        setRole(roleData);
+    });
  
     setMessages(() => [
-           { text: "hello!", message_side: "left", speaker: -1},
-         ]);
+        { text: "hello!", message_side: "left", speaker: -1},
+    ]);
+
+    socket.on('role_updated', handleRoleUpdate);
+
+    return () => {
+        socket.off('role_updated', handleRoleUpdate); // 清除事件監聽器
+    };
 
   }, []);
 
