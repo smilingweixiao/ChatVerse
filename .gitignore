@@ -33,3 +33,5 @@ client/next-env.d.ts
 
 server/myenv
 *.wav
+
+server/chat/chat_history.json
