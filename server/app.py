@@ -1,14 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_socketio import SocketIO
+# from flask_socketio import SocketIO
 import chat.event as event
 from chat.eventType import EventType, agentMap
 
 recording = False
 
 app = Flask(__name__)
-CORS(app)
-socketio = SocketIO(app)
+# CORS(app)
+# socketio = SocketIO(app)
 
 @app.route('/')
 def hello_world():
@@ -65,10 +65,10 @@ def toggleAgent1(agent_id):
 if __name__ == '__main__':
     event.loadChatHistory()
     event.initAgentState({
-        "joy": False,
-        "debater": False,
-        "hater": False,
-        "joker": False,
+        "joy": True,
+        "debater": True,
+        "hater": True,
+        "joker": True,
         "thinker": True,
         "nova": True,
         "expert": False,

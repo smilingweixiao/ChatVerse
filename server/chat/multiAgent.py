@@ -32,7 +32,7 @@ gpt4_config = {
     "timeout": 120,
 }
 
-GENERAL_RULES = "You Should Respond BRIEFLY, Speak ORAL Language!!!"
+GENERAL_RULES = "You Should Respond VERY BRIEFLY, Speak ORAL Language!!!"
 
 def get_enabled_agents(agentState: Dict[str, bool]) -> List[str]:
     """Return a list of agent names that are enabled to speak (where the value is True)."""
@@ -107,7 +107,7 @@ def call_llm_api(conversation_history: str, enabled_agents: List[str]) -> str:
                 {"role": "user", "content": f"Given the following conversation, who should speak next, the following is their names: human, {agent_names}? Just answer who should be fine.\n\n{conversation_history}"}
             ],
             max_tokens=50,
-            temperature=0.7,
+            temperature=0.2,
         )
         # Extract the suggestion from the response
         suggestion = response.choices[0].message.content.strip()
@@ -127,8 +127,8 @@ def generate_response_with_references(agent: Agent, conversation_history: str, l
                 {"role": "system", "content": f"{agent.name}. You should respond to the conversation. You can refer to previous messages from other agents."},
                 {"role": "user", "content": f"Conversation history:\n{conversation_history}\n\nRespond to the last message: '{last_message}'"}
             ],
-            max_tokens=150,
-            temperature=0.7,
+            max_tokens=100,
+            temperature=0.2,
         )
         # Extract the response content
         response_text = response.choices[0].message.content.strip()
@@ -151,7 +151,8 @@ def get_agent_response(chat_history: List[Dict], agentState: Dict[str, bool]) ->
 
     # Determine the next speaker
     suggested_speaker = call_llm_api(conversation_history, enabled_agents)
-
+    if suggested_speaker == "human":
+        return '', suggested_speaker
     print("Suggestion: ", suggested_speaker)
 
     # Map the suggested speaker to the agent
