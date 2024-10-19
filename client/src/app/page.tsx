@@ -15,7 +15,7 @@ export default function Home() {
   useEffect(() => {
  
     setMessages(() => [
-        { text: "hello!", message_side: "middle", speaker: 'system'},
+        { text: "hello!", message_side: "left", speaker: 'system'},
     ]);
 
     socket.on('role_updated', handleRoleUpdate);
