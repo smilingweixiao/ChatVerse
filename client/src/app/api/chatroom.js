@@ -12,7 +12,7 @@ async function server_generate_chat(userInput) {
         timestamp: moment().format('YYYY-MM-DD HH:mm:ss')
     };
     
-    return {speaker: 1, message: "hihihihi", timestamp: "2024-11-11 11:11:11"}
+    return {speaker: 3, message: "hihihihi", timestamp: "2024-11-11 11:11:11"}
   
     let response = await axios.post(`${baseURL}/api/chat`, newMessage);
     console.log('agent say: ', response);

@@ -10,12 +10,24 @@ export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const avatarImages: { [key: string]: string } = {
+    'system': 'https://i.ibb.co/fdFTSp7/website.png',
+    '1' : 'https://i.ibb.co/q7RYZ5q/1.png',
+    '2' : 'https://i.ibb.co/9cJ4mLt/2.png',
+    '3' : 'https://i.ibb.co/wdkppXG/3.png',
+    '4' : 'https://i.ibb.co/x71Y6rB/4.png',
+    '5' : 'https://i.ibb.co/Fnwnsz7/5.png',
+    '6' : 'https://i.ibb.co/MMfWKPp/6.png',
+    '7' : 'https://i.ibb.co/Np5s76X/7.png',
+    '8' : 'https://i.ibb.co/VT7xFwJ/8.png'
+  };
+
   const socket = io('http://localhost:5000');
   
   useEffect(() => {
  
     setMessages(() => [
-        { text: "hello!", message_side: "left", speaker: 'system'},
+        { text: "hello!", message_side: "left", speaker: 'system'}
     ]);
 
     socket.on('role_updated', handleRoleUpdate);
@@ -32,7 +44,7 @@ export default function Home() {
     }
   }, [messages.length]);
 
-  const handleRoleUpdate = ((roleName) => {
+  const handleRoleUpdate = ((roleName: string) => {
     if (roles.includes(roleName)) {
       setRole(roles.filter((role) => role !== roleName));
 
@@ -68,7 +80,7 @@ export default function Home() {
 
     setMessages((prevMessages) => [
       ...prevMessages,
-      { text, message_side: "right", speaker: 'user'},
+      { text, message_side: "right", speaker: 'user'}
     ]);
     setMessageInput("");
 
@@ -135,23 +147,26 @@ export default function Home() {
     
       <div className="chat_window">
         <div className="top_menu">
-          <div className="buttons">
-            <div className="button close"></div>
-            <div className="button minimize"></div>
-            <div className="button maximize"></div>
-          </div>
-          <div className="title">Chat</div>
+          <div className="title">Chat Room</div>
         </div>
         <ul className="messages">
           {messages.map((message, index) => (
             <li key={index} className={`message ${message.message_side} appeared`}>
-              <div className="avatar"></div>
-              <div className="text_wrapper">
-                <div className="text">{message.text}</div>
+              <div>
+                <div className="avatar">
+                  <a href="https://imgbb.com/">
+                    <img src={avatarImages[message.speaker]} alt={avatarImages[message.speaker]}/>
+                  </a>
+                </div>
+                <div className="name">{message.speaker}</div>
               </div>
+              <div className="text_wrapper">
+                 <div className="text">{message.text}</div>
+               </div>
             </li>
             
           ))}
+          
           <div ref={messagesEndRef} />
         </ul >
         
