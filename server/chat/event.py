@@ -24,7 +24,6 @@ def initAgentState():
         agentState[agent] = False
 
 def updateChatHistory(input, eventType):
-    # print("Event handler received input: " + input)
     response = ""
     if eventType == EventType.USER_INPUT:
         print("Receive user input")
@@ -36,7 +35,7 @@ def updateChatHistory(input, eventType):
 
     # update chat history
     chat_history.append({
-        'speaker': 0 if eventType == EventType.USER_INPUT else 1,
+        'speaker': 'user' if eventType == EventType.USER_INPUT else 'agent',
         'message': response,
         'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         'id': str(uuid.uuid4())
