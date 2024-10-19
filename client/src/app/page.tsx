@@ -1,24 +1,18 @@
 "use client"
 import { useEffect, useState } from "react";
+import { generate_chat, start_recording, stop_recording } from './api/chatroom'
 
 export default function Home() {
-  const [messages, setMessages] = useState<{ text: string; message_side: string }[]>([]);
+  const [messages, setMessages] = useState<{ text: string; message_side: string; speaker: number }[]>([]);
   const [messageInput, setMessageInput] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
-    const sendMessage = (text: string) => {
-      if (text.trim() === "") return;
+ 
+    setMessages(() => [
+           { text: "hello!", message_side: "left", speaker: -1},
+         ]);
 
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text, message_side: prevMessages.length % 2 === 0 ? "right" : "left" },
-      ]);
-      setMessageInput("");
-    };
-
-    sendMessage("Hello Philip! :)");
-    setTimeout(() => sendMessage("Hi Sandy! How are you?"), 1000);
-    setTimeout(() => sendMessage("I'm fine, thank you!"), 2000);
   }, []);
 
   const handleSendMessage = () => {
@@ -31,18 +25,64 @@ export default function Home() {
     }
   };
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     if (text.trim() === "") return;
 
     setMessages((prevMessages) => [
       ...prevMessages,
-      { text, message_side: prevMessages.length % 2 === 0 ? "right" : "left" },
+      { text, message_side: "right", speaker: 0},
     ]);
     setMessageInput("");
+
+    generate_chat(text)
+    .then((response) => {
+      console.log(response)
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: response.message, message_side: "left", speaker: response.speaker},
+      ]);
+
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+   
+  };
+
+
+  const handleStartRecording = async () => {
+    setIsRecording(true);
+    console.log("Recording started...");
+    start_recording()
+    .then((response) => {
+      console.log(response)
+  0  })
+    .catch((err) => {
+      console.error(err)
+    })
+  };
+
+  const handleStopRecording = async () => {
+
+    stop_recording()
+    .then((response) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: response.message, message_side: "left", speaker: response.speaker},
+      ]);
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+
+    // await new Promise((resolve) => setTimeout(resolve, 500)); // 模擬網路延遲
+    setIsRecording(false);
+    console.log("Recording ended!");
+
   };
 
   return (
-    <div>
+    
       <div className="chat_window">
         <div className="top_menu">
           <div className="buttons">
@@ -62,7 +102,7 @@ export default function Home() {
             </li>
           ))}
         </ul>
-        <div className="bottom_wrapper clearfix">
+        <div className="bottom_wrapper">
           <div className="message_input_wrapper">
             <input
               className="message_input"
@@ -71,6 +111,12 @@ export default function Home() {
               onChange={(e) => setMessageInput(e.target.value)}
               onKeyUp={handleKeyUp}
             />
+            <button
+              className="record_button"
+              onClick={isRecording ? handleStopRecording : handleStartRecording}
+            >
+              {isRecording ? "🛑" : "🎤"}
+            </button>
           </div>
           <div className="send_message" onClick={handleSendMessage}>
             <div className="icon"></div>
@@ -78,14 +124,14 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="message_template">
-        <li className="message">
-          <div className="avatar"></div>
-          <div className="text_wrapper">
-            <div className="text"></div>
-          </div>
-        </li>
-      </div>
-    </div>
+      // <div className="message_template">
+      //   <li className="message">
+      //     <div className="avatar"></div>
+      //     <div className="text_wrapper">
+      //       <div className="text"></div>
+      //     </div>
+      //   </li>
+      // </div>
+    
   );
 }
