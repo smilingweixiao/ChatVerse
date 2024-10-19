@@ -55,7 +55,7 @@ def clearChatHistory():
         json.dump(chat_history, f, indent=4)
 
 def toggleAgent(agent_id):
-    agentState[agent_id] = not agentState[agent_id]
+    agentState[agent_id - 1] = not agentState[agent_id - 1]
 
 if __name__ == '__main__':
     print(getChatHistory())

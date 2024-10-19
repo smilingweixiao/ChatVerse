@@ -34,7 +34,7 @@ def stopRecord():
     recording = False
     from audio.record import stopRecording
     stopRecording()
-    return jsonify({'message': 'Recording completed'}), 200
+    return jsonify(event.getChatHistory()[-1]), 200
 
 @app.route('/api/chat', methods=['GET', 'POST', 'DELETE'])
 def chat():
