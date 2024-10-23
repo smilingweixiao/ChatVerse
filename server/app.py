@@ -89,7 +89,7 @@ def handle_disconnect():
 #     return 'Role updated!'
 
 if __name__ == '__main__':
-    event.loadChatHistory()
+    # event.loadChatHistory()
     event.initAgentState({
         "joy": False,
         "debater": False,

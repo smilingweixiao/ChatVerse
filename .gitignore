@@ -3,6 +3,7 @@
 __pycache__/
 .venv
 .env
+.cache/
 
 # client
 client/node_modules
