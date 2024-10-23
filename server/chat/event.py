@@ -9,7 +9,7 @@ import time
 import random
 
 AGENT_COUNT = 8
-CHAT_PATH = "server/chat/chat_history.json"
+CHAT_PATH = "chat/chat_history.json"
 agentState = {}
 
 lock = threading.Lock()
@@ -64,6 +64,7 @@ def updateChatHistory(input, speaker, recording=False):
     global lock, agentResponse, chat_history, agent_history, agentResponseFlag, thread
     
     if input != '':
+        # human speak
         chat_history.append({
                 'speaker': speaker,
                 'message': input,
@@ -72,13 +73,14 @@ def updateChatHistory(input, speaker, recording=False):
             })
         if recording:
             return True
-        # print("Receive user input")
         response, agent = get_agent_response(chat_history, agentState)
+        # make sure at lease one agent response
         if 'human' in agent:
             while True:
                 response, agent = get_agent_response(chat_history, agentState)
                 if 'human' not in agent:
                     break
+        # agent response
         chat_history.append({
                 'speaker': agent,
                 'message': response,
@@ -87,23 +89,20 @@ def updateChatHistory(input, speaker, recording=False):
             })
         agentResponse = 0
         agentResponseFlag = True
+        agent_history = []
         if thread == None or thread.is_alive() == False:
             thread = threading.Thread(target=threadGetResponse)
             thread.start()
     else:
-        # print("Get agent input")
         count = 0
         while agentResponse == 0:
             if thread == None or (thread != None and not thread.is_alive()):
                 return False
-            # print("Waiting for agent response, agentResponse: ", agentResponse)
             if agentResponseFlag == False or count > 5:
                 return False
             count += 1
             time.sleep(1)
-        # print("Waiting for agentResponse's lock")
         with lock:
-            # print("agentResponse's lock acquired, agentResponse: ", agentResponse)
             agentResponse -= 1
             message = agent_history.pop(0)
         if message['speaker'] == 'human':

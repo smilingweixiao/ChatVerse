@@ -19,7 +19,7 @@ llm_config = {
 
 # Assuming you have 'oai_config.json' properly set up, else you can skip this
 config_list = autogen.config_list_from_json(
-    env_or_file="./server/chat/oai_config.json",
+    env_or_file="./chat/oai_config.json",
     filter_dict={
         "model": ["gpt-4o-mini"],
     },

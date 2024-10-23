@@ -2,7 +2,6 @@ import pyaudio
 import wave
 import threading
 import chat.event as event
-import whisper
 from chat.eventType import EventType
 from openai import OpenAI
 import os
@@ -60,23 +59,23 @@ def stopRecording():
     print("Whisper output: ", text)
     event.updateChatHistory(text, 'human', True)
 
-def speech2text(file_path):
-    # Load the Whisper model
-    model_m = whisper.load_model('small').to("cuda")
+# def speech2text(file_path):
+#     # Load the Whisper model
+#     model_m = whisper.load_model('small').to("cuda")
 
-    # Load the audio
-    audio = whisper.load_audio(file_path)
-    audio = whisper.pad_or_trim(audio)
+#     # Load the audio
+#     audio = whisper.load_audio(file_path)
+#     audio = whisper.pad_or_trim(audio)
 
-    # Convert the audio to log-Mel spectrograms
-    # mel = whisper.log_mel_spectrogram(audio).to(model_m.device)
+#     # Convert the audio to log-Mel spectrograms
+#     # mel = whisper.log_mel_spectrogram(audio).to(model_m.device)
 
-    # Detect language (optional step)
-    # _, probs = model_m.detect_language(mel)
-    # print(f"Detected language: {max(probs, key=probs.get)}")
+#     # Detect language (optional step)
+#     # _, probs = model_m.detect_language(mel)
+#     # print(f"Detected language: {max(probs, key=probs.get)}")
 
-    result = model_m.transcribe(file_path)
-    return result["text"]
+#     result = model_m.transcribe(file_path)
+#     return result["text"]
 
 api_key = os.environ['OPENAI_API_KEY']
 client = OpenAI(api_key=api_key)
