@@ -37,12 +37,17 @@ def initAgentState(initial_state=None):
 
 def threadGetResponse():
     global lock, agentResponse, chat_history, agentResponseFlag
-    count = random.randint(0, 2)
+    # count = random.randint(0, 2)
     while True:
-        if count > 5:
-            agentResponseFlag = False
-            return
+        # if count > 5:
+        #     agentResponseFlag = False
+        #     return
         response, agent = get_agent_response(chat_history + agent_history, agentState)
+        if not agentState[agent]:
+            while True:
+                response, agent = get_agent_response(chat_history + agent_history, agentState)
+                if agentState[agent]:
+                    break
         # print("agent:", agent, ", response: ", response)
         
         with lock:
@@ -57,7 +62,7 @@ def threadGetResponse():
                 'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 'id': str(uuid.uuid4())
             })
-        count += 1
+        # count += 1
         
 
 def updateChatHistory(input, speaker, recording=False):
@@ -78,7 +83,7 @@ def updateChatHistory(input, speaker, recording=False):
         if 'human' in agent:
             while True:
                 response, agent = get_agent_response(chat_history, agentState)
-                if 'human' not in agent:
+                if agentState[agent] and 'human' not in agent:
                     break
         # agent response
         chat_history.append({
