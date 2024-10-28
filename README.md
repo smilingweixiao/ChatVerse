@@ -6,12 +6,19 @@ ChatVerse is a chatroom featuring multiple AI agents, each with a distinct perso
 ![](./Demo/demo.png)
 
 ## Prerequisite
+### Python version
+Please check your python version.
+```
+python --version
+```
+Supported Python versions: 3.9.6 and 3.8.8 (tested).
+
 ### Install dependency
 ```
 pip install -r ./server/requirements.txt
 ```
 
-> It is strongly recommended to use virtual evironment
+> It is strongly recommended to use virtual evironment.
 
 ### API key
 ```
@@ -37,7 +44,7 @@ make backend
 make agent<ID>
 ```
 
-For example, if you want to wake up agent1 `make agent1`
+For example, if you want to wake up agent1, you can type `make agent1` in terminal.
 
 The agentID correspond to agent below:
 
