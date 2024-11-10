@@ -1,6 +1,8 @@
 PORT1 = 3000
 PORT2 = 5000
 
+.PHONY: frontend backend agent%
+
 frontend:
 	cd client && npm install && npm run dev
 
@@ -9,6 +11,3 @@ backend:
 
 agent%:
 	curl 127.0.0.1:$(PORT2)/api/console/$*
-
-# Phony targets
-.PHONY: all clean
