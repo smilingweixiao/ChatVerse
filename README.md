@@ -22,7 +22,8 @@ pip install -r ./server/requirements.txt
 
 > It is strongly recommended to use virtual evironment.
 
-### API key
+### API key (Optional)
+If you are using docker, you can skip this step.
 ```
 echo "OPENAI_API_KEY=<replace your API key here>" > ./server/chat/.env
 echo "AUTOGEN_USE_DOCKER=False" >> ./server/chat/.env
@@ -34,12 +35,12 @@ echo "AUTOGEN_USE_DOCKER=False" >> ./server/chat/.env
 make frontend
 ```
 
-Then access [frontend](http://localhost:3000) , wait for frontend to be compiled, then you will see the website!
+Then access [frontend](http://localhost:3000), wait for frontend to be compiled, then you will see the website!
 
 ### Server (Backend)
 If you are using docker:
 ```
-make backend
+docker run --rm -d -p 5000:5000 --name chatverse -e OPENAI_API_KEY=<replace your OpenAI API key here> -e AUTOGEN_USE_DOCKER=False mike911209/chatverse
 ```
 
 If you want to run Chatverse locally:

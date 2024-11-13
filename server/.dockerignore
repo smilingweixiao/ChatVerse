@@ -1,4 +1,7 @@
 __pycache__/
+./audio/__pycache__/
+./chat/__pycache__/
 .cache/
 *env*/
-chat_history
+./chat/chat_history.json
+./chat/.env
