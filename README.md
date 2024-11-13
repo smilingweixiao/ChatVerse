@@ -45,7 +45,7 @@ docker run --rm -d -p 5000:5000 --name chatverse -e OPENAI_API_KEY=<replace your
 
 If you want to run Chatverse locally:
 ```
-make backendLocal
+make backend
 ```
 
 ### Wake up AI agent
