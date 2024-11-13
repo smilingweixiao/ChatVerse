@@ -1,12 +1,12 @@
-FROM python:3.9.6 as base
+FROM python:3.9.6-slim as base
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-RUN apt-get update -y &&\
-    apt-get install libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev -y &&\
+RUN apt-get update -y && \
+    apt-get install libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev -y && \
     rm -rf /var/lib/apt/lists/*
 
 RUN --mount=type=cache,target=/root/.cache/pip \
@@ -16,6 +16,5 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY . .
 
 EXPOSE 5000
-EXPOSE 3000
 
 CMD ["python", "app.py"]
