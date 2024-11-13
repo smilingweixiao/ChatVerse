@@ -13,7 +13,9 @@ python --version
 ```
 Supported Python versions: 3.9.6 and 3.8.8 (tested).
 
-### Install dependency
+### Install dependency (Optional)
+This is only required if you want to run Chatverse without using docker.
+
 ```
 pip install -r ./server/requirements.txt
 ```
@@ -32,11 +34,17 @@ echo "AUTOGEN_USE_DOCKER=False" >> ./server/chat/.env
 make frontend
 ```
 
-Then access [frontend](http://127.0.0.1:3000) , wait for frontend to be compiled, then you will see the website!
+Then access [frontend](http://localhost:3000) , wait for frontend to be compiled, then you will see the website!
 
 ### Server (Backend)
+If you are using docker:
 ```
 make backend
+```
+
+If you want to run Chatverse locally:
+```
+make backendLocal
 ```
 
 ### Wake up AI agent
@@ -60,4 +68,4 @@ The agentID correspond to agent below:
 | 8 | Evil |
 
 ### Chat with AI agents!
-Access [website](http://127.0.0.1:3000), chat with them!
+Access [website](http://localhost:3000), chat with them!

@@ -9,7 +9,7 @@ recording = False
 
 app = Flask(__name__)
 # 配置CORS
-socketio = SocketIO(app, cors_allowed_origins="http://127.0.0.1:3000")
+socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
 CORS(app)
 
@@ -100,4 +100,4 @@ if __name__ == '__main__':
         "expert": False,
         "evil": False
     })
-    socketio.run(app, host='localhost', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
